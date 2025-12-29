@@ -42,7 +42,7 @@ const Footer = () => {
       transition-all duration-300
     "
   >
-    <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+    <a href="https://wa.me/+919785240147" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
       <MessageCircle className="w-5 h-5" />
       Chat on WhatsApp
     </a>
