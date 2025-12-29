@@ -112,7 +112,7 @@ const ProductsSection = () => {
   "
 >
   <a
-    href="https://wa.me/9785240147"
+    href="https://wa.me/+919785240147"
     target="_blank"
     rel="noopener noreferrer"
     className="flex items-center justify-center gap-2"
