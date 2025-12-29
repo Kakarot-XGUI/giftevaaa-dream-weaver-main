@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import FloatingLines from '@/components/ui/FloatingLines';
 
 import { HelmetProvider } from "react-helmet-async";
 
@@ -35,6 +36,13 @@ const App = () => (
         <Sonner />
         <RouterProvider router={router} />
         {/* Speed Insights badge (dynamically imports @vercel/speed-insights at runtime) */}
+        <div style={{ width: '100%', height: '100vh', position: 'absolute', top: 0, left: 0, zIndex: 2 }}>
+  <FloatingLines
+    enabledWaves={["middle","bottom","top"]}
+    lineDistance={19}
+    bendStrength={2}
+  />
+</div>
         <SpeedInsights strategy="mobile" showDesktop={false} />
       </TooltipProvider>
     </QueryClientProvider>
