@@ -1,6 +1,6 @@
 import { Heart, MessageCircle, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Logo from "@/assets/Logo.png";
+import Logo from "@/assets/images/Logo.png";
 
 const Footer = () => {
   return (

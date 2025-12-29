@@ -1,7 +1,7 @@
 import { Heart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import Logo from "@/assets/Logo.png";
+import Logo from "@/assets/images/Logo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

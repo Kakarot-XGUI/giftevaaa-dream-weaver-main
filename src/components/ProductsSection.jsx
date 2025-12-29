@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Sparkles, MessageCircle } from "lucide-react";
 
-import crochetBirds from "@/assets/crochet-birds.jpg";
-import crochetRose from "@/assets/crochet-rose.jpg";
-import giftBox from "@/assets/gift-box.jpg";
-import strawberryKeychains from "@/assets/strawberry-keychains.jpg";
+import crochetBirds from "@/assets/images/crochet-birds.jpg";
+import crochetRose from "@/assets/images/crochet-rose.jpg";
+import giftBox from "@/assets/images/gift-box.jpg";
+import strawberryKeychains from "@/assets/images/strawberry-keychains.jpg";
 
 const products = [
   {
