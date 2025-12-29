@@ -94,7 +94,7 @@ const HowToOrderSection = () => {
         {/* CTA */}
         <div className="text-center mt-12">
           <Button variant="whatsapp" size="xl" asChild>
-            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/+919785240147" target="_blank" rel="noopener noreferrer">
               <MessageCircle className="w-5 h-5" />
               Start Your Order Now
             </a>
