@@ -18,22 +18,47 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
       try {
         // dynamic import keeps the package out of initial bundle
         const mod = await import("@vercel/speed-insights");
-        const getInsights = mod.getInsights || mod.default?.getInsights || mod.get;
+        const url = window.location.origin;
+        let res = null;
 
-        if (!getInsights) {
-          throw new Error("getInsights not found on @vercel/speed-insights module");
+        // Try to find a callable API on the module
+        const getInsights =
+          mod.getInsights ||
+          mod.default?.getInsights ||
+          mod.get ||
+          (typeof mod === "function" ? mod : null) ||
+          (typeof mod.default === "function" ? mod.default : null);
+
+        // If we have a callable, use it. Otherwise fall back to the public PSI REST API.
+        if (getInsights) {
+          res = await getInsights({ url, strategy });
+        } else {
+          // Fallback to Google PageSpeed Insights REST API (no key required for basic usage)
+          const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(
+            url
+          )}&strategy=${encodeURIComponent(strategy)}`;
+          const r = await fetch(apiUrl);
+          if (!r.ok) throw new Error(`PSI fetch failed: ${r.status}`);
+          res = await r.json();
         }
 
-        const url = window.location.origin;
-
-        // Primary strategy (mobile by default)
-        const res = await getInsights({ url, strategy });
         const perf = Math.round((res?.lighthouseResult?.categories?.performance?.score || 0) * 100);
         if (mounted) setScore(perf);
 
         // Optionally fetch desktop score
         if (showDesktop) {
-          const resDesk = await getInsights({ url, strategy: "desktop" });
+          let resDesk = null;
+          if (getInsights) {
+            resDesk = await getInsights({ url, strategy: "desktop" });
+          } else {
+            const apiUrlDesk = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(
+              url
+            )}&strategy=desktop`;
+            const rDesk = await fetch(apiUrlDesk);
+            if (!rDesk.ok) throw new Error(`PSI fetch failed: ${rDesk.status}`);
+            resDesk = await rDesk.json();
+          }
+
           const perfDesk = Math.round((resDesk?.lighthouseResult?.categories?.performance?.score || 0) * 100);
           if (mounted) setDesktopScore(perfDesk);
         }
