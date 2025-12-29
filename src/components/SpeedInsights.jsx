@@ -16,27 +16,67 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
 
     (async () => {
       try {
+        const host = window.location.hostname;
+        const isLocal =
+          host === "localhost" ||
+          host === "127.0.0.1" ||
+          host === "::1" ||
+          host.endsWith(".local") ||
+          host.startsWith("192.168.");
+
+        // Avoid calling PSI during local dev to prevent noisy console errors and rate-limiting
+        if (isLocal) {
+          if (mounted) {
+            setError("local");
+            setLoading(false);
+          }
+          return;
+        }
+
+        // Simple session cache to avoid repeated calls (12 hours)
+        const cacheKey = `speed-insights:${window.location.origin}:${strategy}`;
+        const ttl = 12 * 60 * 60 * 1000; // 12 hours
+        try {
+          const raw = sessionStorage.getItem(cacheKey);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Date.now() - parsed.ts < ttl) {
+              if (mounted) {
+                setScore(parsed.score ?? null);
+                if (showDesktop) setDesktopScore(parsed.desktopScore ?? null);
+                setLoading(false);
+              }
+              return;
+            }
+          }
+        } catch (e) {
+          // sessionStorage may be unavailable in some contexts; ignore
+        }
+
         // dynamic import keeps the package out of initial bundle
-        const mod = await import("@vercel/speed-insights");
+        const mod = await import("@vercel/speed-insights").catch(() => null);
         const url = window.location.origin;
         let res = null;
 
         // Try to find a callable API on the module
         const getInsights =
-          mod.getInsights ||
-          mod.default?.getInsights ||
-          mod.get ||
-          (typeof mod === "function" ? mod : null) ||
-          (typeof mod.default === "function" ? mod.default : null);
+          mod?.getInsights || mod?.default?.getInsights || mod?.get || (typeof mod === "function" ? mod : null) || (typeof mod?.default === "function" ? mod.default : null);
 
-        // If we have a callable, use it. Otherwise fall back to the public PSI REST API.
+        // Try getInsights if available, but don't let it throw the whole flow
         if (getInsights) {
-          res = await getInsights({ url, strategy });
-        } else {
-          // Fallback to Google PageSpeed Insights REST API (no key required for basic usage)
-          const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(
-            url
-          )}&strategy=${encodeURIComponent(strategy)}`;
+          try {
+            res = await getInsights({ url, strategy });
+          } catch (e) {
+            // swallow and fall through to REST fallback
+            res = null;
+          }
+        }
+
+        // If we don't have a usable module response, fall back to the public PSI REST API
+        if (!res) {
+          const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=${encodeURIComponent(
+            strategy
+          )}`;
           const r = await fetch(apiUrl);
           if (!r.ok) throw new Error(`PSI fetch failed: ${r.status}`);
           res = await r.json();
@@ -46,27 +86,39 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
         if (mounted) setScore(perf);
 
         // Optionally fetch desktop score
+        let perfDesk = null;
         if (showDesktop) {
           let resDesk = null;
           if (getInsights) {
-            resDesk = await getInsights({ url, strategy: "desktop" });
-          } else {
-            const apiUrlDesk = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(
-              url
-            )}&strategy=desktop`;
+            try {
+              resDesk = await getInsights({ url, strategy: "desktop" });
+            } catch (e) {
+              resDesk = null;
+            }
+          }
+
+          if (!resDesk) {
+            const apiUrlDesk = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=desktop`;
             const rDesk = await fetch(apiUrlDesk);
             if (!rDesk.ok) throw new Error(`PSI fetch failed: ${rDesk.status}`);
             resDesk = await rDesk.json();
           }
 
-          const perfDesk = Math.round((resDesk?.lighthouseResult?.categories?.performance?.score || 0) * 100);
+          perfDesk = Math.round((resDesk?.lighthouseResult?.categories?.performance?.score || 0) * 100);
           if (mounted) setDesktopScore(perfDesk);
+        }
+
+        // cache result
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), score: perf, desktopScore: perfDesk }));
+        } catch (e) {
+          // ignore storage errors
         }
 
         if (mounted) setLoading(false);
       } catch (err) {
-        // Don't crash the app; just show a console warning and optionally an error in UI
-        console.warn("Speed Insights fetch failed", err);
+        // Only log in production to reduce noise during development
+        if (process.env.NODE_ENV === "production") console.warn("Speed Insights fetch failed", err);
         if (mounted) {
           setError(err.message || "failed");
           setLoading(false);
