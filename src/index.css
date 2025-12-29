@@ -1,0 +1,211 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 50% 98%;
+    --foreground: 340 20% 25%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 340 20% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 20% 25%;
+
+    --primary: 340 60% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 40% 94%;
+    --secondary-foreground: 340 20% 25%;
+
+    --muted: 30 30% 92%;
+    --muted-foreground: 340 15% 45%;
+
+    --accent: 270 45% 75%;
+    --accent-foreground: 270 50% 25%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 30% 88%;
+    --input: 30 30% 88%;
+    --ring: 340 60% 65%;
+
+    --radius: 1rem;
+
+    /* Custom colors for Giftevaaa */
+    --blush: 340 60% 85%;
+    --lavender: 270 50% 85%;
+    --baby-blue: 200 60% 85%;
+    --cream: 40 50% 95%;
+    --warm-beige: 30 40% 90%;
+    --soft-pink: 340 50% 75%;
+    --rose: 340 70% 60%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(30 50% 98%) 0%, hsl(340 60% 95%) 50%, hsl(270 50% 95%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(30 40% 98%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(341, 76%, 69%) 0%, hsl(270, 78%, 66%) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(340 60% 65% / 0.15);
+    --shadow-card: 0 8px 30px -8px hsl(340 30% 50% / 0.12);
+    --shadow-hover: 0 12px 40px -8px hsl(340 60% 65% / 0.25);
+
+    /* Font families */
+    --font-display: 'Pacifico', cursive;
+    --font-body: 'Quicksand', sans-serif;
+  }
+
+  .dark {
+    --background: 340 20% 10%;
+    --foreground: 30 50% 95%;
+
+    --card: 340 20% 12%;
+    --card-foreground: 30 50% 95%;
+
+    --popover: 340 20% 12%;
+    --popover-foreground: 30 50% 95%;
+
+    --primary: 340 60% 70%;
+    --primary-foreground: 340 20% 10%;
+
+    --secondary: 340 20% 18%;
+    --secondary-foreground: 30 50% 95%;
+
+    --muted: 340 20% 18%;
+    --muted-foreground: 30 30% 65%;
+
+    --accent: 270 45% 65%;
+    --accent-foreground: 30 50% 95%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 340 20% 20%;
+    --input: 340 20% 20%;
+    --ring: 340 60% 70%;
+
+    --blush: 340 40% 30%;
+    --lavender: 270 30% 30%;
+    --baby-blue: 200 40% 30%;
+    --cream: 40 30% 20%;
+    --warm-beige: 30 25% 25%;
+    --soft-pink: 340 40% 45%;
+    --rose: 340 50% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-hover {
+    box-shadow: var(--shadow-hover);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 6s ease-in-out infinite 2s;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.6s ease-out forwards;
+  }
+
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
