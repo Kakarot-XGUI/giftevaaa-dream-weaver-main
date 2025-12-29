@@ -33,11 +33,41 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
           return;
         }
 
-        // Simple session cache to avoid repeated calls (12 hours)
-        const cacheKey = `speed-insights:${window.location.origin}:${strategy}`;
+        const origin = window.location.origin;
+        // Simple cache to avoid repeated calls (12 hours)
+        const cacheKey = `speed-insights:${origin}:${strategy}`;
         const ttl = 12 * 60 * 60 * 1000; // 12 hours
+
+        // Cooldown key to avoid hammering PSI if we receive 429s
+        const cooldownKey = `speed-insights:cooldown:${origin}:${strategy}`;
         try {
-          const raw = sessionStorage.getItem(cacheKey);
+          const cooldownRaw = localStorage.getItem(cooldownKey);
+          if (cooldownRaw && Date.now() < Number(cooldownRaw)) {
+            // We're in cooldown; use cache if available, else show rate-limited error
+            const raw = localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey);
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (mounted) {
+                setScore(parsed.score ?? null);
+                if (showDesktop) setDesktopScore(parsed.desktopScore ?? null);
+                setError("rate_limited_cached");
+                setLoading(false);
+              }
+              return;
+            } else {
+              if (mounted) {
+                setError("rate_limited");
+                setLoading(false);
+              }
+              return;
+            }
+          }
+        } catch (e) {
+          // ignore storage errors
+        }
+
+        try {
+          const raw = sessionStorage.getItem(cacheKey) || localStorage.getItem(cacheKey);
           if (raw) {
             const parsed = JSON.parse(raw);
             if (Date.now() - parsed.ts < ttl) {
@@ -50,12 +80,12 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
             }
           }
         } catch (e) {
-          // sessionStorage may be unavailable in some contexts; ignore
+          // storage may be unavailable; ignore
         }
 
         // dynamic import keeps the package out of initial bundle
         const mod = await import("@vercel/speed-insights").catch(() => null);
-        const url = window.location.origin;
+        const url = origin;
         let res = null;
 
         // Try to find a callable API on the module
@@ -78,7 +108,33 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
             strategy
           )}`;
           const r = await fetch(apiUrl);
-          if (!r.ok) throw new Error(`PSI fetch failed: ${r.status}`);
+          if (!r.ok) {
+            // if rate-limited, set a cooldown (1 hour) and try to use cached result if present
+            if (r.status === 429) {
+              const cooldownFor = Date.now() + 60 * 60 * 1000; // 1 hour cooldown
+              try {
+                localStorage.setItem(cooldownKey, String(cooldownFor));
+              } catch (e) {
+                // ignore
+              }
+
+              const cachedRaw = localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey);
+              if (cachedRaw) {
+                const parsed = JSON.parse(cachedRaw);
+                if (mounted) {
+                  setScore(parsed.score ?? null);
+                  if (showDesktop) setDesktopScore(parsed.desktopScore ?? null);
+                  setError("rate_limited_cached");
+                  setLoading(false);
+                }
+                return;
+              }
+
+              throw new Error(`PSI fetch failed: ${r.status}`);
+            }
+
+            throw new Error(`PSI fetch failed: ${r.status}`);
+          }
           res = await r.json();
         }
 
@@ -100,7 +156,31 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
           if (!resDesk) {
             const apiUrlDesk = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=desktop`;
             const rDesk = await fetch(apiUrlDesk);
-            if (!rDesk.ok) throw new Error(`PSI fetch failed: ${rDesk.status}`);
+            if (!rDesk.ok) {
+              if (rDesk.status === 429) {
+                const cooldownFor = Date.now() + 60 * 60 * 1000; // 1 hour cooldown
+                try {
+                  localStorage.setItem(cooldownKey, String(cooldownFor));
+                } catch (e) {
+                  // ignore
+                }
+
+                const cachedRaw = localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey);
+                if (cachedRaw) {
+                  const parsed = JSON.parse(cachedRaw);
+                  if (mounted) {
+                    setDesktopScore(parsed.desktopScore ?? null);
+                    setError("rate_limited_cached");
+                    setLoading(false);
+                  }
+                  return;
+                }
+
+                throw new Error(`PSI fetch failed: ${rDesk.status}`);
+              }
+
+              throw new Error(`PSI fetch failed: ${rDesk.status}`);
+            }
             resDesk = await rDesk.json();
           }
 
@@ -110,9 +190,22 @@ const SpeedInsights = ({ strategy = "mobile", showDesktop = false }) => {
 
         // cache result
         try {
-          sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), score: perf, desktopScore: perfDesk }));
+          const data = { ts: Date.now(), score: perf, desktopScore: perfDesk };
+          sessionStorage.setItem(cacheKey, JSON.stringify(data));
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(data));
+          } catch (e) {
+            // ignore localStorage errors (e.g., private mode)
+          }
         } catch (e) {
           // ignore storage errors
+        }
+
+        // clear cooldown (if present)
+        try {
+          localStorage.removeItem(cooldownKey);
+        } catch (e) {
+          // ignore
         }
 
         if (mounted) setLoading(false);
