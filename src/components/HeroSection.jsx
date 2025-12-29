@@ -58,12 +58,15 @@ const HeroSection = () => {
   </a>
 </Button>
 
+
+
             <Button variant="whatsapp" size="xl" asChild>
-              <a href="https://wa.me/9785240147" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/+919785240147" target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="w-5 h-5" />
-                Order on WhatsApp
+                Order on WhatsApp 
               </a>
             </Button>
+
           </div>
 
           {/* Trust Indicators */}
