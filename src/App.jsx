@@ -26,19 +26,36 @@ const router = createBrowserRouter(
   }
 );
 
+import bg from "@/assets/images/bg.png";
+
 const App = () => (
-  <HelmetProvider>
-   
-    
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <RouterProvider router={router} />
+  <div
+    className="min-h-screen relative"
+    style={{
+      backgroundImage: `url(${bg})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center center",
+      backgroundRepeat: "no-repeat",
+      backgroundAttachment: "fixed",
+    }}
+  >
+    {/* subtle overlay to ensure content is readable */}
+    <div className="absolute inset-0 bg-white/40 dark:bg-black/40 pointer-events-none z-0" />
+
+    <div className="relative z-10">
+      <HelmetProvider>
        
-      </TooltipProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <RouterProvider router={router} />
+           
+          </TooltipProvider>
+        </QueryClientProvider>
+      </HelmetProvider>
+    </div>
+  </div>
 );
 
 export default App;

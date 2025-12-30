@@ -7,13 +7,15 @@ import { Search, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-const categories = ["Keychain", "Bouquet", "Gift Hampers", "Mini Puppets"];
+const categories = ["Keychain", "Bouquet", "Gift Hampers", "Mini Puppets", "Deco"];
 
 const AllProducts = () => {
   const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState(new Set());
 
   const toggleCategory = (cat) => {
+    // Clear search when user toggles a filter
+    setQuery("");
     setSelectedCategories((prev) => {
       const next = new Set(prev);
       if (next.has(cat)) next.delete(cat);
@@ -52,7 +54,14 @@ const AllProducts = () => {
               <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setQuery(v);
+                  // If user starts typing a non-empty search, clear any selected filters
+                  if (v.trim() !== "") {
+                    setSelectedCategories(new Set());
+                  }
+                }}
                 className="w-full pl-10 pr-4 py-3 rounded-full border border-border bg-card shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Search products, e.g. keychain, bouquet, box..."
               />
