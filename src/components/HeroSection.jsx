@@ -19,7 +19,7 @@ const HeroSection = () => {
       <div className="container mx-auto relative z-10 text-center px-4">
         <div className="max-w-3xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-soft mb-8 animate-fade-up">
+          <div className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-soft mb-8 animate-fade-up mt-4">
             <Sparkles className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-muted-foreground">Handmade with Love</span>
             <Sparkles className="w-4 h-4 text-primary" />
@@ -34,7 +34,7 @@ const HeroSection = () => {
           </h1>
 
           {/* Subheading */}
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up animation-delay-200">
+          <p className="text-lg font-bold sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up animation-delay-200">
             Cute keychains, mini puppets & handcrafted bouquets — perfect for birthdays & special moments.
           </p>
 

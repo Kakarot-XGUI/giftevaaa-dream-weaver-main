@@ -1,41 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Sparkles, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import products from "@/lib/products";
 
-import crochetBirds from "@/assets/images/crochet-birds.jpg";
-import crochetRose from "@/assets/images/crochet-rose.jpg";
-import giftBox from "@/assets/images/gift-box.jpg";
-import strawberryKeychains from "@/assets/images/strawberry-keychains.jpg";
-
-const products = [
-  {
-    id: 1,
-    title: "Crochet Keychains",
-    description: "Adorable handmade keychains — hearts, animals & cute shapes",
-    image: strawberryKeychains,
-    bgColor: "bg-blush/30",
-  },
-  {
-    id: 2,
-    title: "Mini Puppets",
-    description: "Cuddly soft toys & mini plushies, perfect for gifting",
-    image: crochetBirds,
-    bgColor: "bg-baby-blue/30",
-  },
-  {
-    id: 3,
-    title: "Flower Bouquets",
-    description: "Everlasting crochet flowers wrapped with love",
-    image: crochetRose,
-    bgColor: "bg-lavender/30",
-  },
-  {
-    id: 4,
-    title: "Birthday Gift Boxes",
-    description: "Curated surprise hampers for your special ones",
-    image: giftBox,
-    bgColor: "bg-cream",
-  },
-];
+// We'll show a few featured items here (first 4)
+const featured = products.slice(0, 4);
 
 const ProductsSection = () => {
   return (
@@ -69,7 +38,7 @@ const ProductsSection = () => {
 
         {/* Products Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {products.map((product, index) => (
+          {featured.map((product, index) => (
             <div
               key={product.id}
               className="group bg-card rounded-3xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-500 hover:-translate-y-2"
@@ -77,7 +46,7 @@ const ProductsSection = () => {
             >
               {/* Image Container */}
               <div
-                className={`relative aspect-square ${product.bgColor} overflow-hidden`}
+                className={`relative aspect-square overflow-hidden`}
               >
                 <img
                   src={product.image}
@@ -143,13 +112,7 @@ const ProductsSection = () => {
       transition-all duration-300
     "
           >
-            <a
-              href="https://www.instagram.com/giftevaaaa/?utm_source=qr&igsh=MWg0bXkwM201OW14ZA%3D%3D#"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View All on Instagram ✨
-            </a>
+            <Link to="/products">Explore All Products ✨</Link>
           </Button>
         </div>
       </div>

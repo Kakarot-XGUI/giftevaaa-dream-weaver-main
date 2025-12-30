@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Logo from "@/assets/images/Logo.png";
 
-const Navbar = () => {
+const AllNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);
@@ -34,12 +34,9 @@ const Navbar = () => {
   }, [isHidden, isOpen]);
 
   const navLinks = [
-    { href: "#about", label: "About" },
-    { href: "#products", label: "Products" },
-    { href: "/products", label: "Explore More" },
-    { href: "#why-us", label: "Why Us" },
-    { href: "#how-to-order", label: "Order" },
-    { href: "#testimonials", label: "Reviews" },
+    { href: "/", label: "Home" },
+    { href: "/products", label: "Explore More" }
+   
   ];
 
   return (
@@ -142,4 +139,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default AllNavbar;

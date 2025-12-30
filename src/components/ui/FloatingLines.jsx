@@ -374,6 +374,7 @@ export default function FloatingLines({
 
     const setSize = () => {
       const el = containerRef.current;
+      if (!el) return; // container might be null when ResizeObserver fires during/after unmount
       const width = el.clientWidth || 1;
       const height = el.clientHeight || 1;
 
@@ -444,8 +445,8 @@ export default function FloatingLines({
     return () => {
       cancelAnimationFrame(raf);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      if (ro && containerRef.current) {
-        ro.disconnect();
+      if (ro) {
+        try { ro.disconnect(); } catch (e) { /* ignore */ }
       }
 
       if (interactive) {

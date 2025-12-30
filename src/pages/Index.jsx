@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
+import FloatingLines from '@/components/ui/FloatingLines';
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import ProductsSection from "@/components/ProductsSection";
@@ -34,6 +35,14 @@ const Index = () => {
 
       <main className="overflow-x-hidden">
         <Navbar />
+        <div style={{ width: '100%', height: '100vh', position: 'absolute', top: 0, left: 0, zIndex: 2 }}>
+          <FloatingLines
+            enabledWaves={["middle","bottom","top"]}
+            lineDistance={19}
+            bendStrength={2}
+            parallaxStrength={0.35}
+          />
+        </div>
         <HeroSection />
         <AboutSection />
         <ProductsSection />
