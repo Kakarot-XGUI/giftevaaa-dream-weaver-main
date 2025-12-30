@@ -9,7 +9,7 @@ import { HelmetProvider } from "react-helmet-async";
 
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
-import SpeedInsights from "@/components/SpeedInsights";
+
 
 const queryClient = new QueryClient();
 
@@ -28,7 +28,7 @@ const router = createBrowserRouter(
 
 const App = () => (
   <HelmetProvider>
-    <SpeedInsights />
+   
     
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -41,9 +41,10 @@ const App = () => (
     enabledWaves={["middle","bottom","top"]}
     lineDistance={19}
     bendStrength={2}
+    parallaxStrength={0.35}
   />
 </div>
-        <SpeedInsights strategy="mobile" showDesktop={false} />
+       
       </TooltipProvider>
     </QueryClientProvider>
   </HelmetProvider>
