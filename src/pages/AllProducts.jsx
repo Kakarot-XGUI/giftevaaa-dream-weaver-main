@@ -85,8 +85,8 @@ const AllProducts = () => {
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filtered.map((p) => (
             <article key={p.id} className="bg-white rounded-xl shadow-card border-2 border-dashed border-border p-4">
-              <div className="aspect-[4/3] bg-gray-50 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
-                <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+              <div className="aspect-[5/6] bg-gray-50 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
+                <img src={p.image} alt={p.title} className="w-full h-full object-cover object-center" />
               </div>
               <div className="flex items-start justify-between gap-4">
                 <div>
