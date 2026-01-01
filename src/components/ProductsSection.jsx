@@ -65,31 +65,39 @@ const ProductsSection = () => {
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                   {product.description}
                 </p>
-               <Button
-  size="sm"
-  asChild
-  className="
-    w-full
-    rounded-full
-    bg-white
-    text-primary
-    border border-primary
-    hover:bg-primary
-    hover:text-white
-    transition-all duration-300
-    shadow-soft
-  "
->
-  <a
-    href="https://wa.me/+919785240147"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center justify-center gap-2"
-  >
-    <MessageCircle className="w-4 h-4" />
-    Enquire Now
-  </a>
-</Button>
+              <div className="flex gap-3">
+                <Button
+                  size="sm"
+                  asChild
+                  className="
+                    flex-1
+                    rounded-full
+                    bg-white
+                    text-primary
+                    border border-primary
+                    hover:bg-primary
+                    hover:text-white
+                    transition-all duration-300
+                    shadow-soft
+                  "
+                >
+                  <a
+                    href="https://wa.me/+919785240147"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Enquire Now
+                  </a>
+                </Button>
+
+                <Button asChild size="sm" className="rounded-full bg-primary text-white border border-primary hover:bg-primary/90">
+                  <Link to={`/products/${product.id}`} className="px-4 py-2">
+                    View
+                  </Link>
+                </Button>
+              </div>
 
               </div>
             </div>

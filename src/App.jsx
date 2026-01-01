@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 
 import Index from "@/pages/Index";
 import AllProducts from "@/pages/AllProducts";
+import Product from "@/pages/Product";
 import NotFound from "@/pages/NotFound";
 
 
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
   [
     { path: "/", element: <Index /> },
     { path: "/products", element: <AllProducts /> },
+    { path: "/products/:id", element: <Product /> },
     { path: "*", element: <NotFound /> },
   ],
   {
